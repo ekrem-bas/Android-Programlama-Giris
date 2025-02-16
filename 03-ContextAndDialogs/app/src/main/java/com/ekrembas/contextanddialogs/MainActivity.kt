@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     fun buttonDialog(view: View) {
         // alert dialog
         // application context verildiginde hata veriyor
-//        val alert = AlertDialog.Builder(applicationContext)
+        //val alert = AlertDialog.Builder(applicationContext)
         var alert = AlertDialog.Builder(this@MainActivity)
         alert.setTitle("Alert Başlığı")
         alert.setMessage("Alert Mesajı")
