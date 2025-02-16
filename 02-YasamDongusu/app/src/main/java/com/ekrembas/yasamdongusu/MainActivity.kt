@@ -67,7 +67,17 @@ class MainActivity : AppCompatActivity() {
             this,
             SecondActivity::class.java
         ) // bu context'ten diger sinifa gecme
+
+        // bu aktivitedeki degeri diger aktiviteye gonderme
+        val kullaniciGirdisi = binding.editText.text.toString()
+        intent.putExtra("isim", kullaniciGirdisi)
         startActivity(intent)
+
+        //finish() // bu aktiviteyi destroy eder
+        // login sayfasi gibi dusun kullanici basariyla login olursa bir daha o sayfaya ihtiyacin kalmaz
+        // o sayfayi destroy edersin ve kullanici ne kadar geri butonuna basarsa bassin o sayfayi goremez
+        // hesabindan cikis yapmadigi surece
+
 
         // kullanicidan alinan metin icin islemler
 //        val textController = binding.editText.text.toString()
