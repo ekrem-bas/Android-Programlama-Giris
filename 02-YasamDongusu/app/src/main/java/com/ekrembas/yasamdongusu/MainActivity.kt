@@ -1,5 +1,6 @@
 package com.ekrembas.yasamdongusu
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -61,7 +62,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sonrakiSayfa(view: View) {
-        val textController = binding.editText.text.toString()
-        binding.textView.text = "İsim: ${textController}"
+        // bir sonraki sayfaya gecme islemleri
+        val intent = Intent(
+            this,
+            SecondActivity::class.java
+        ) // bu context'ten diger sinifa gecme
+        startActivity(intent)
+
+        // kullanicidan alinan metin icin islemler
+//        val textController = binding.editText.text.toString()
+//        binding.textView.text = "İsim: ${textController}"
     }
 }
