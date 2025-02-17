@@ -1,5 +1,6 @@
 package com.ekrembas.superkahramankitabi
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -29,5 +30,15 @@ class SuperKahramanAdapter(val superKahramanListesi: ArrayList<SuperKahraman>) :
     // Recycler View icerisindeki item'lara tiklandiginda ne olacak, nereye gidilecek vs.
     override fun onBindViewHolder(holder: SuperKahramanViewHolder, position: Int) {
         holder.binding.textViewRecyclerView.text = superKahramanListesi[position].isim
+
+        // holder'a tiklandiginda ne yapilacak
+        holder.itemView.setOnClickListener {
+            // intent yapisi (this, ...) diyememizin sebebi bu sinifin aktivite olmamasi
+            val intent = Intent(holder.itemView.context, TanitimAktivitesi::class.java)
+            // yine this diyememizin sebebi bu sinifin aktivite olmamasi ve bize bir context gerekmesi
+            // holder.itemView diyerek parent'in context'ine erisebiliyoruz
+            // LayoutInflater.from(parent.context) gibi
+            holder.itemView.context.startActivity(intent)
+        }
     }
 }
