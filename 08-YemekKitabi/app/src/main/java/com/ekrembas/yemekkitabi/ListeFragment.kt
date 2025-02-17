@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import com.ekrembas.yemekkitabi.databinding.FragmentListeBinding
 
 class ListeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var _binding: FragmentListeBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,11 +21,28 @@ class ListeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_liste, container, false)
+        _binding = FragmentListeBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // yeni tarif ekleme fonksiyonunu butona atama
+        binding.floatingActionButton.setOnClickListener {
+            yeniEkle(it)
+        }
+    }
+
+    // yeni tarif ekleme fonksiyonu
+    fun yeniEkle(view: View) {
+        val action = ListeFragmentDirections.actionListeFragmentToTarifFragment("yeni", 0)
+        Navigation.findNavController(view).navigate(action)
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

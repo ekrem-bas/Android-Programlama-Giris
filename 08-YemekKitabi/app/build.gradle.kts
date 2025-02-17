@@ -9,6 +9,10 @@ android {
     namespace = "com.ekrembas.yemekkitabi"
     compileSdk = 35
 
+    buildFeatures {
+        viewBinding = true
+    }
+    
     defaultConfig {
         applicationId = "com.ekrembas.yemekkitabi"
         minSdk = 24
