@@ -5,6 +5,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ekrembas.superkahramankitabi.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -34,5 +35,10 @@ class MainActivity : AppCompatActivity() {
 
         // listenin doldurulmasi
         superKahramanListesi = arrayListOf(superman, batman, aquaman, ironman)
+
+        // Adapter'i initialize ettik
+        val adapter = SuperKahramanAdapter(superKahramanListesi)
+        binding.superKahramanRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+        binding.superKahramanRecyclerView.adapter = adapter
     }
 }
