@@ -9,6 +9,10 @@ android {
     namespace = "com.ekrembas.fragmentvenavigation"
     compileSdk = 35
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.ekrembas.fragmentvenavigation"
         minSdk = 24

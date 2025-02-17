@@ -18,5 +18,9 @@
             android:id="@+id/ikinciFragment"
             android:name="com.ekrembas.fragmentvenavigation.IkinciFragment"
             android:label="fragment_ikinci"
-            tools:layout="@layout/fragment_ikinci" />
+            tools:layout="@layout/fragment_ikinci">
+        <argument
+                android:name="kullaniciIsmi"
+                app:argType="string" />
+    </fragment>
 </navigation>
