@@ -39,6 +39,8 @@ class SuperKahramanAdapter(val superKahramanListesi: ArrayList<SuperKahraman>) :
             // 1. yontem: yollanacak sinifi Serializable yapmak
             intent.putExtra("secilenKahraman", superKahramanListesi[position])
 
+            // 2. yontem: Singleton kullanmak
+            MySingleton.secilenSuperKahraman = superKahramanListesi[position]
             // yine this diyememizin sebebi bu sinifin aktivite olmamasi ve bize bir context gerekmesi
             // holder.itemView diyerek parent'in context'ine erisebiliyoruz
             // LayoutInflater.from(parent.context) gibi

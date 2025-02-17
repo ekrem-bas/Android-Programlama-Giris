@@ -23,6 +23,7 @@ class TanitimAktivitesi : AppCompatActivity() {
             insets
         }
 
+        // 1. verinin intent kullanilarak alinmasi
         // bu yeni bir android surumunde geldigi icin eski cihazlarda calismayabilir (API Level 33)
         //val secilenKahraman = intent.getSerializableExtra("secilenKahraman", SuperKahraman::class.java)
         // eski hali
@@ -31,5 +32,14 @@ class TanitimAktivitesi : AppCompatActivity() {
         binding.imageView2.setImageResource(secilenKahraman.gorsel)
         binding.isimTextView.text = secilenKahraman.isim
         binding.meslekTextView.text = secilenKahraman.meslek
+
+        // 2. verinin singleton kullanilarak alinmasi
+        val secilenSuperKahraman = MySingleton.secilenSuperKahraman
+        // nullable kontrolu
+        secilenSuperKahraman?.let {
+            binding.imageView2.setImageResource(secilenSuperKahraman.gorsel)
+            binding.isimTextView.text = secilenSuperKahraman.isim
+            binding.meslekTextView.text = secilenSuperKahraman.meslek
+        }
     }
 }
