@@ -35,6 +35,10 @@ class SuperKahramanAdapter(val superKahramanListesi: ArrayList<SuperKahraman>) :
         holder.itemView.setOnClickListener {
             // intent yapisi (this, ...) diyememizin sebebi bu sinifin aktivite olmamasi
             val intent = Intent(holder.itemView.context, TanitimAktivitesi::class.java)
+            // veriyi yollama
+            // 1. yontem: yollanacak sinifi Serializable yapmak
+            intent.putExtra("secilenKahraman", superKahramanListesi[position])
+
             // yine this diyememizin sebebi bu sinifin aktivite olmamasi ve bize bir context gerekmesi
             // holder.itemView diyerek parent'in context'ine erisebiliyoruz
             // LayoutInflater.from(parent.context) gibi

@@ -22,5 +22,14 @@ class TanitimAktivitesi : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // bu yeni bir android surumunde geldigi icin eski cihazlarda calismayabilir (API Level 33)
+        //val secilenKahraman = intent.getSerializableExtra("secilenKahraman", SuperKahraman::class.java)
+        // eski hali
+        val secilenKahraman = intent.getSerializableExtra("secilenKahraman") as SuperKahraman
+        // kahramanin gorselinin, isminin ve mesleginin ayarlanmasi
+        binding.imageView2.setImageResource(secilenKahraman.gorsel)
+        binding.isimTextView.text = secilenKahraman.isim
+        binding.meslekTextView.text = secilenKahraman.meslek
     }
 }

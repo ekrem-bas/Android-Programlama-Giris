@@ -1,4 +1,6 @@
 package com.ekrembas.superkahramankitabi
 
-class SuperKahraman(val isim: String, val meslek: String, val gorsel: Int) {
+import java.io.Serializable
+
+class SuperKahraman(val isim: String, val meslek: String, val gorsel: Int) : Serializable {
 }
