@@ -33,7 +33,7 @@ class BirinciFragment : Fragment() {
             sonraki(it)
         }
 
-        // fragment'larda context
+        // fragment'larda context ornegi
         Toast.makeText(requireContext(), "Hoş geldiniz...", Toast.LENGTH_LONG).show()
     }
 
