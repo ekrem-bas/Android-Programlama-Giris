@@ -19,9 +19,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import androidx.room.Room
 import com.ekrembas.yemekkitabi.databinding.FragmentTarifBinding
 import com.ekrembas.yemekkitabi.model.Tarif
+import com.ekrembas.yemekkitabi.roomdb.TarifDAO
+import com.ekrembas.yemekkitabi.roomdb.TarifDatabase
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.ByteArrayOutputStream
 
 class TarifFragment : Fragment() {
@@ -35,9 +42,24 @@ class TarifFragment : Fragment() {
     private var secilenGorsel: Uri? = null // resmin path'i
     private var secilenBitmap: Bitmap? = null // uri'den alinan path'i gorsele cevirme
 
+    // database icin degiskenler
+    private lateinit var db: TarifDatabase
+    private lateinit var tarifDAO: TarifDAO
+
+    // RxJava degiskeni Threading icin gerekli
+    // cok fazla istek oldugunda uygulamada sıkinti olmasin diye
+    // bu istekleri kullan at sekline donusturmeye yariyor
+    private val mDisposable = CompositeDisposable()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerLauncher()
+        db = Room.databaseBuilder(
+            requireContext(),
+            TarifDatabase::class.java, "Tarifler" // Database'e vermek istedigimiz isim
+        ).build()
+
+        tarifDAO = db.tarifDAO()
     }
 
     override fun onCreateView(
@@ -86,9 +108,21 @@ class TarifFragment : Fragment() {
             // modelde byte dizisi olarak tanimli cunku
             val byteDizisi = outputStream.toByteArray()
 
-            // tarifimizi olusturalim
             val tarif = Tarif(isim, malzeme, byteDizisi)
+            // RxJava (threading icin gerekli)
+            mDisposable.add(
+                tarifDAO.insert(tarif)
+                    .subscribeOn(Schedulers.io()) // thread secme islemi (islemi arka planda yap)
+                    .observeOn(AndroidSchedulers.mainThread()) // sonucu mainThread'e getir
+                    .subscribe(this::handleResponseForInsert) // bu islem sonucunda hangi fonksiyon calisacak
+            )
         }
+    }
+
+    private fun handleResponseForInsert() {
+        // bir onceki ekrana don
+        val action = TarifFragmentDirections.actionTarifFragmentToListeFragment()
+        Navigation.findNavController(requireView()).navigate(action)
     }
 
     fun sil(view: View) {
