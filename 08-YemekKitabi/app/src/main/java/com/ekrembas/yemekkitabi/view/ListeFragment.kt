@@ -6,10 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
+import com.ekrembas.yemekkitabi.adapter.TarifAdapter
 import com.ekrembas.yemekkitabi.databinding.FragmentListeBinding
+import com.ekrembas.yemekkitabi.model.Tarif
 import com.ekrembas.yemekkitabi.roomdb.TarifDAO
 import com.ekrembas.yemekkitabi.roomdb.TarifDatabase
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class ListeFragment : Fragment() {
 
@@ -19,6 +25,9 @@ class ListeFragment : Fragment() {
     // database icin degiskenler
     private lateinit var db: TarifDatabase
     private lateinit var tarifDAO: TarifDAO
+
+    // threading icin gerekli olan degisken
+    private val mDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +53,25 @@ class ListeFragment : Fragment() {
         binding.floatingActionButton.setOnClickListener {
             yeniEkle(it)
         }
+        // layout manager
+        binding.traifRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        // verileri al
+        verileriAl()
+    }
+
+    private fun verileriAl() {
+        mDisposable.add(
+            tarifDAO.getAll()
+                .subscribeOn(Schedulers.io()) // arka planda islemi yap
+                .observeOn(AndroidSchedulers.mainThread()) // islem tamamlaninca mainThread'e gonder
+                .subscribe(this::handleResponse) // tum her sey tamamlaninca ne yapilacak
+        )
+    }
+
+    private fun handleResponse(tarifler: List<Tarif>) {
+        // adapter'i initial et
+        val adapter = TarifAdapter(tarifler)
+        binding.traifRecyclerView.adapter = adapter
     }
 
     // yeni tarif ekleme fonksiyonu
@@ -56,5 +84,6 @@ class ListeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        mDisposable.clear()
     }
 }

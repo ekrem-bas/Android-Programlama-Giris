@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -88,9 +89,26 @@ class TarifFragment : Fragment() {
             } else {
                 // var olan tarif gosterilecek
                 binding.kaydetButton.isEnabled = false
+                // secilen tarifin id'sini safeArgs yardimiyla al
+                val id = TarifFragmentArgs.fromBundle(it).id
+                // Threading (RxJava) kullanarak id ile db'den tarifi cek
+                mDisposable.add(
+                    tarifDAO.findById(id)
+                        .subscribeOn(Schedulers.io()) // arka planda islemi yap
+                        .observeOn(AndroidSchedulers.mainThread()) // gelen bilgiyi main threade aktar
+                        .subscribe(this::handleResponse) // islem bittikten sonra ne olsun
+                )
             }
-            val id = TarifFragmentArgs.fromBundle(it).id
         }
+    }
+
+    private fun handleResponse(tarif: Tarif) {
+        // alinan tarifin ismini tarif fragment'inda goster
+        binding.isimText.setText(tarif.isim)
+        binding.malzemeText.setText(tarif.malzeme)
+        // byte array olan resmi bitmap'e cevir
+        val bitmap = BitmapFactory.decodeByteArray(tarif.gorsel, 0, tarif.gorsel.size)
+        binding.imageView.setImageBitmap(bitmap)
     }
 
     fun kaydet(view: View) {
@@ -269,5 +287,6 @@ class TarifFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        mDisposable.clear() // view kapandiginda disposable'i da clear et
     }
 }
