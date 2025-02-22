@@ -20,7 +20,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.ekrembas.yemekkitabi.databinding.FragmentTarifBinding
+import com.ekrembas.yemekkitabi.model.Tarif
 import com.google.android.material.snackbar.Snackbar
+import java.io.ByteArrayOutputStream
 
 class TarifFragment : Fragment() {
 
@@ -70,7 +72,23 @@ class TarifFragment : Fragment() {
     }
 
     fun kaydet(view: View) {
+        // tarif icin gerekli olan degiskenler
+        val isim = binding.isimText.text.toString()
+        val malzeme = binding.malzemeText.text.toString()
+        // SQLite kullandigimizdan buyuk gorselleri kucultmemiz gerekir
+        if (secilenBitmap != null) {
+            // secilen gorselin bitmap'ini kucuk bitmap haline getir
+            val kucukBitmap = kucukBitmapOlustur(secilenBitmap!!, 300)
+            // bu bitmap'i kucultmek ve kullanabilmek icin sıkıstır
+            val outputStream = ByteArrayOutputStream()
+            kucukBitmap.compress(Bitmap.CompressFormat.PNG, 50, outputStream)
+            // sıkıstırılan bitmapi byte dizisi haline getir
+            // modelde byte dizisi olarak tanimli cunku
+            val byteDizisi = outputStream.toByteArray()
 
+            // tarifimizi olusturalim
+            val tarif = Tarif(isim, malzeme, byteDizisi)
+        }
     }
 
     fun sil(view: View) {
@@ -152,7 +170,6 @@ class TarifFragment : Fragment() {
                     if (intentFromResult != null) {
                         secilenGorsel = intentFromResult.data
                         try {
-
                             // yeni yontem
                             if (Build.VERSION.SDK_INT >= 28) {
                                 val source = ImageDecoder.createSource(
@@ -190,6 +207,29 @@ class TarifFragment : Fragment() {
                     Toast.makeText(requireContext(), "İzin Verilmedi!", Toast.LENGTH_LONG).show()
                 }
             }
+    }
+
+    // gorseli kucultmek icin fonksiyon
+    private fun kucukBitmapOlustur(kullanicininBitmapi: Bitmap, maxBoyut: Int): Bitmap {
+        // kullanicinin sectigi gorsellerin width ve height degerleri
+        var width = kullanicininBitmapi.width
+        var height = kullanicininBitmapi.height
+
+        val bitmapOrani: Double = width.toDouble() / height.toDouble()
+
+        if (bitmapOrani > 1) {
+            // gorsel yatay
+            width = maxBoyut
+            val kisaltilmisYukseklik = width / bitmapOrani
+            height = kisaltilmisYukseklik.toInt()
+        } else {
+            // gorsel dikey
+            height = maxBoyut
+            val kisaltilmisGenislik = height * bitmapOrani
+            width = kisaltilmisGenislik.toInt()
+        }
+
+        return Bitmap.createScaledBitmap(kullanicininBitmapi, width, height, true)
     }
 
     override fun onDestroyView() {
