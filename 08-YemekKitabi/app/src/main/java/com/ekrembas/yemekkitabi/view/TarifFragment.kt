@@ -1,4 +1,4 @@
-package com.ekrembas.yemekkitabi
+package com.ekrembas.yemekkitabi.view
 
 import android.Manifest
 import android.content.Intent
