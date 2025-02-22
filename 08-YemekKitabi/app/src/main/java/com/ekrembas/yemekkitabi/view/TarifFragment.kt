@@ -52,6 +52,9 @@ class TarifFragment : Fragment() {
     // bu istekleri kullan at sekline donusturmeye yariyor
     private val mDisposable = CompositeDisposable()
 
+    // silme islemi icin onceki sayfadan gelen tarifin degiskeni
+    private var secilenTarif: Tarif? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerLauncher()
@@ -103,12 +106,13 @@ class TarifFragment : Fragment() {
     }
 
     private fun handleResponse(tarif: Tarif) {
-        // alinan tarifin ismini tarif fragment'inda goster
-        binding.isimText.setText(tarif.isim)
-        binding.malzemeText.setText(tarif.malzeme)
         // byte array olan resmi bitmap'e cevir
         val bitmap = BitmapFactory.decodeByteArray(tarif.gorsel, 0, tarif.gorsel.size)
         binding.imageView.setImageBitmap(bitmap)
+        // alinan tarifin ismini tarif fragment'inda goster
+        binding.isimText.setText(tarif.isim)
+        binding.malzemeText.setText(tarif.malzeme)
+        secilenTarif = tarif
     }
 
     fun kaydet(view: View) {
@@ -144,7 +148,14 @@ class TarifFragment : Fragment() {
     }
 
     fun sil(view: View) {
-
+        if (secilenTarif != null) {
+            mDisposable.add(
+                tarifDAO.delete(secilenTarif!!)
+                    .subscribeOn(Schedulers.io()) // arka planda yap
+                    .observeOn(AndroidSchedulers.mainThread()) // on plana getir
+                    .subscribe(this::handleResponseForInsert) // islem bittikten sonra yapilacak islem (bir onceki sayfaya don)
+            )
+        }
     }
 
     fun gorselSec(view: View) {
